@@ -17,6 +17,8 @@ public class User {
         this.id = id;
     }
 
+
+
     public String getId() {
         return id;
     }
@@ -51,6 +53,6 @@ public class User {
 
     @Override
     public String toString() {
-        return String.format("Идентафикатор: %s\nИмя: %s,\nФамилия: %s,\nТелефон: %s", id, firstName, lastName, phone);
+        return String.format("Идентификатор: %s Имя: %s, Фамилия: %s, Телефон: %s", id, firstName, lastName, phone);
     }
 }

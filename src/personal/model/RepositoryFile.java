@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RepositoryFile implements Repository {
+   
     private UserMapper mapper = new UserMapper();
     private FileOperation fileOperation;
 
@@ -20,9 +21,34 @@ public class RepositoryFile implements Repository {
         }
         return users;
     }
-
     @Override
-    public String CreateUser(User user) {
+    public void UpdateUser(User user, Fields field, String param) {
+        if(field == Fields.FIO) {
+            user.setLastName(param);
+        }
+        else if(field == Fields.NAME) {
+            user.setFirstName(param);
+        }
+        else if(field == Fields.TELEPHONE) {
+            user.setPhone(param);
+        }
+        saveUser(user);
+    }
+    private void saveUser(User user) {
+        List<String> lines = new ArrayList<>();
+        List<User> users = getAllUsers();
+        for (User item: users) {
+            if(user.getId().equals(item.getId())) {
+                lines.add(mapper.map(user, ","));
+            }
+            else {
+                lines.add(mapper.map(item, ","));
+            }
+        }
+        fileOperation.saveAllLines(lines);
+    }
+    @Override
+    public String CreateUser(User user, String reg) {
 
         List<User> users = getAllUsers();
         int max = 0;
@@ -38,9 +64,27 @@ public class RepositoryFile implements Repository {
         users.add(user);
         List<String> lines = new ArrayList<>();
         for (User item: users) {
-            lines.add(mapper.map(item));
+            lines.add(mapper.map(item, reg));
         }
         fileOperation.saveAllLines(lines);
         return id;
+    }
+
+    @Override
+    public void deleteUser(String id) {
+        List<String> lines = new ArrayList<>();
+        List<User> users = getAllUsers();
+        // for (User item: users) {
+        //     if(item.getId().equals(id)) {
+        //         users.remove(item);
+        //     }
+        // }
+
+        for (User item: users) {
+            if(!item.getId().equals(id)) {
+                lines.add(mapper.map(item, ","));
+            }
+        }
+        fileOperation.saveAllLines(lines);
     }
 }
